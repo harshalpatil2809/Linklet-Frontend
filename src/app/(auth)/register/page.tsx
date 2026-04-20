@@ -8,6 +8,7 @@ import { useState } from "react";
 import API from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner"
+import Cookies from 'js-cookie'
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('')
@@ -17,6 +18,12 @@ const RegisterPage = () => {
   const router = useRouter()
 
   const scaleup = `hover:scale-110 duration-700`
+
+  const token = Cookies.get('access')
+
+  if(token){
+    router.push('/dashboard')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +63,7 @@ const RegisterPage = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row items-center justify-center bg-[#0F0D11] text-white">
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-right" richColors closeButton/>
       
       {/* Left Side - Visuals (Same as Login) */}
       <div className="relative min-h-screen w-full md:w-1/2 overflow-hidden bg-[linear-gradient(135deg,#0F0D11_0%,#150524_25%,#200048_60%,#2A006A_100%)] hidden md:block">
