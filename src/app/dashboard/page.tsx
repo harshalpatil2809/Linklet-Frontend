@@ -3,29 +3,26 @@ import React, { useState } from 'react'
 import { Toaster } from "@/components/ui/sonner"
 import Sidebar from '@/components/Sidebar/Sidebar'
 import Chat from '@/components/Chat/Chat'
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
+
 
 const DashboardPage = () => {
   const [activeChat, setActiveChat] = useState<any>(null);
+  const router = useRouter()
+  const token = Cookies.get('access')
+
+  if (!token){
+    router.push('/login')
+  }
 
   return (
-    <div className='bg-[#0F0D11] h-screen w-full text-white flex overflow-hidden font-sans relative'>
-      <Toaster position="top-right" richColors />
-
-      {/* Sidebar - Mobile par full width agar chat select nahi hai, Desktop par 30% */}
-      <div className={`
-        ${activeChat ? 'hidden md:flex' : 'flex'} 
-        w-full md:w-[20%] min-w-[320px] border-r border-white/5 h-full
-      `}>
-        <Sidebar onChatSelect={setActiveChat} activeChatId={activeChat?.id} />
-      </div>
-
-      {/* Chat Section - Mobile par full width agar chat select hai, Desktop par 70% */}
-      <div className={`
-        ${!activeChat ? 'hidden md:flex' : 'flex'} 
-        w-full md:w-[80%] flex flex-col h-full
-      `}>
-        <Chat activeChat={activeChat} onBack={() => setActiveChat(null)} />
-      </div>
+    <div className='flex h-screen bg-[#0F0D11]'>
+      <Sidebar 
+        onChatSelect={(user: any) => setActiveChat(user)} // <-- Yeh function pass hona chahiye
+        activeChatId={activeChat?.id} 
+      />
+      <Chat activeChat={activeChat} onBack={() => setActiveChat(null)} />
     </div>
   )
 }

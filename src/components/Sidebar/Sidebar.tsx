@@ -21,7 +21,7 @@ const Sidebar = ({ onChatSelect, activeChatId }: SidebarProps) => {
 
             {/* 2. Search Section - Fixed below Logo */}
             <div className='shrink-0'>
-                <SearchUser />
+                <SearchUser onChatSelect={onChatSelect}/>
             </div>
 
             {/* 3. Conversations Label - Just for UX */}

@@ -1,4 +1,7 @@
 'use client'
+import React, { useEffect, useState } from 'react'
+import API from '@/lib/axios'
+import { Loader2 } from 'lucide-react'
 
 interface ChatItem {
     id: number;
@@ -11,12 +14,53 @@ interface ChatItem {
 }
 
 const ChatList = ({ onChatSelect, activeChatId }: any) => {
-    // Dummy data (Baad mein API se replace karenge)
-    const chats: ChatItem[] = [
-        { id: 1, name: 'Lucky Singh', lastMsg: 'Bhai backend setup ho gaya?', time: '2:30 PM', unread: 3, isOnline: true },
-        { id: 2, name: 'Priya Verma', lastMsg: 'Send me the linklet files', time: '12:15 PM', unread: 0, isOnline: false },
-        { id: 3, name: 'Rahul Kumar', lastMsg: 'Kal milte hain pakka!', time: 'Yesterday', unread: 1, isOnline: true },
-    ];
+    const [chats, setChats] = useState<ChatItem[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchInbox = async () => {
+            try {
+                // Backend endpoint jo contacts/messages ki summary de
+                const res = await API.get('/api/profiles/mutual/'); 
+                
+                // Backend se aane wale data ko frontend interface ke mutabiq map karein
+                const formattedChats = res.data.map((item: any) => ({
+                    id: item.other_user.id,
+                    name: item.other_user.username,
+                    lastMsg: item.last_message?.text || "No messages yet",
+                    time: item.last_message?.timestamp || "",
+                    unread: item.unread_count || 0,
+                    isOnline: item.other_user.is_online || false
+                }));
+
+                setChats(formattedChats);
+            } catch (err) {
+                console.error("Failed to fetch inbox:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchInbox();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className='flex-1 flex items-center justify-center'>
+                <Loader2 size={24} className='text-[#BA9EFF] animate-spin opacity-20' />
+            </div>
+        );
+    }
+
+    if (chats.length === 0) {
+        return (
+            <div className='flex-1 px-8 flex items-center justify-center text-center'>
+                <p className='text-xs text-white/20 font-medium uppercase tracking-widest'>
+                    No conversations yet. Start a new one!
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className='flex-1 overflow-y-auto px-4 mt-2 custom-scrollbar space-y-2'>
@@ -34,7 +78,6 @@ const ChatList = ({ onChatSelect, activeChatId }: any) => {
                         <div className={`w-14 h-14 rounded-full bg-linear-to-br from-[#BA9EFF] to-[#43237A] flex items-center justify-center text-black font-bold text-xl border-2 ${activeChatId === chat.id ? 'border-[#BA9EFF]' : 'border-white/10'}`}>
                             {chat.name[0]}
                         </div>
-                        {/* Online Indicator */}
                         {chat.isOnline && (
                             <div className='absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-4 border-[#0F0D11] rounded-full'></div>
                         )}
@@ -56,7 +99,6 @@ const ChatList = ({ onChatSelect, activeChatId }: any) => {
                                 {chat.lastMsg}
                             </p>
 
-                            {/* Unread Badge */}
                             {chat.unread > 0 && (
                                 <div className='bg-[#BA9EFF] text-black text-[10px] font-black px-2 py-0.5 rounded-full min-w-[1.2rem] text-center'>
                                     {chat.unread}
