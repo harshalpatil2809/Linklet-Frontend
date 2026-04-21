@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import ChatHeader from './ChatHeader'
 import MessageArea from './MessageArea'
 import ChatInput from './ChatInput'
-import UserProfileView from './UserProfileView' // Naya component
+import UserProfileView from '../Chat/UserProfileView' // Naya component
 
 const Chat = ({ activeChat, onBack }: any) => {
   const [showProfile, setShowProfile] = useState(false);

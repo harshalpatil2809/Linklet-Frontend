@@ -13,25 +13,40 @@ interface ChatItem {
     isOnline: boolean;
 }
 
-const ChatList = ({ onChatSelect, activeChatId }: any) => {
+type Chat = {
+    id?: number;
+    username?: string;
+    text?: string;
+    timestamp?: string;
+    unread_count?: number;
+    is_online?: boolean;
+};
+
+type ChatListProps = {
+  onChatSelect: (chat: ChatItem) => void;
+  activeChatId: number | null;
+};
+
+const ChatList = ({ onChatSelect, activeChatId }: ChatListProps) => {
     const [chats, setChats] = useState<ChatItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchInbox = async () => {
             try {
-                // Backend endpoint jo contacts/messages ki summary de
-                const res = await API.get('/api/profiles/mutual/'); 
-                
-                // Backend se aane wale data ko frontend interface ke mutabiq map karein
-                const formattedChats = res.data.map((item: any) => ({
-                    id: item.other_user.id,
-                    name: item.other_user.username,
-                    lastMsg: item.last_message?.text || "No messages yet",
-                    time: item.last_message?.timestamp || "",
-                    unread: item.unread_count || 0,
-                    isOnline: item.other_user.is_online || false
-                }));
+                const res = await API.get('/api/profiles/mutual/');
+
+                const formattedChats = res.data.map((item: Chat) => {
+
+                    return {
+                        id: item.id || Math.random(), // Fallback agar id na ho
+                        name: item.username || "Unknown User",
+                        lastMsg: item.text || "No messages yet",
+                        time: item.timestamp || "",
+                        unread: item.unread_count || 0,
+                        isOnline: item.is_online || false
+                    };
+                });
 
                 setChats(formattedChats);
             } catch (err) {
@@ -69,8 +84,8 @@ const ChatList = ({ onChatSelect, activeChatId }: any) => {
                     key={chat.id}
                     onClick={() => onChatSelect(chat)}
                     className={`group flex items-center gap-4 p-4 rounded-[2rem] cursor-pointer transition-all duration-300 border ${activeChatId === chat.id
-                            ? 'bg-[#BA9EFF]/10 border-[#BA9EFF]/20 shadow-lg shadow-black/20'
-                            : 'hover:bg-white/5 border-transparent'
+                        ? 'bg-[#BA9EFF]/10 border-[#BA9EFF]/20 shadow-lg shadow-black/20'
+                        : 'hover:bg-white/5 border-transparent'
                         }`}
                 >
                     {/* Profile Section */}

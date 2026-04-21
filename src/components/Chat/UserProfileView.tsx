@@ -38,7 +38,7 @@ const UserProfileView = ({ user }: any) => {
             const newStatus = res.data.following ?? !isFollowing
             setIsFollowing(newStatus)
             toast.success(res.data.message || "Updated successfully")
-        } catch (err) {
+        } catch {
             toast.error("Action failed. Try again.")
         } finally {
             setLoading(false)
@@ -58,7 +58,7 @@ const UserProfileView = ({ user }: any) => {
             <div className='w-full max-w-sm bg-white/5 border border-white/10 rounded-[3rem] p-8 flex flex-col items-center text-center shadow-2xl'>
 
                 {/* Large Avatar */}
-                <div className='w-32 h-32 rounded-full bg-gradient-to-br from-[#BA9EFF] to-[#43237A] p-1 mb-6'>
+                <div className='w-32 h-32 rounded-full bg-linear-to-br from-[#BA9EFF] to-[#43237A] p-1 mb-6'>
                     <div className='w-full h-full rounded-full bg-[#0F0D11] flex items-center justify-center text-5xl font-black text-[#BA9EFF] border-4 border-white/5'>
                         {user.name[0].toUpperCase()}
                     </div>
