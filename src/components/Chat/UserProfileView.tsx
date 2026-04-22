@@ -9,12 +9,10 @@ const UserProfileView = ({ user }: any) => {
     const [loading, setLoading] = useState(false)
     const [fetching, setFetching] = useState(true)
 
-    // Check latest follow status from backend when component mounts
     useEffect(() => {
     const fetchFreshStatus = async () => {
         setFetching(true);
         try {
-            // Hum username ka use karke backend se pooch rahe hain
             const res = await API.get(`/api/profiles/target/${user.name}/`); 
             setIsFollowing(res.data.is_following);
         } catch (err) {
@@ -34,7 +32,6 @@ const UserProfileView = ({ user }: any) => {
         setLoading(true)
         try {
             const res = await API.post(`/api/follows/toggle/${user.name}/`)
-            // Backend should return the current status: e.g., { "following": true }
             const newStatus = res.data.following ?? !isFollowing
             setIsFollowing(newStatus)
             toast.success(res.data.message || "Updated successfully")

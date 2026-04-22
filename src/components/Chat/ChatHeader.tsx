@@ -25,7 +25,7 @@ const ChatHeader = ({ activeChat, onBack }: ChatHeaderProps) => {
 
                 {/* User Avatar with Online Indicator */}
                 <div className='relative'>
-                    <div className='w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#BA9EFF] to-[#43237A] border-2 border-white/10 flex items-center justify-center text-black font-bold text-lg'>
+                    <div className='w-10 h-10 md:w-12 md:h-12 rounded-full bg-linear-to-br from-[#BA9EFF] to-[#43237A] border-2 border-white/10 flex items-center justify-center text-black font-bold text-lg'>
                         {activeChat.name[0]}
                     </div>
                     {activeChat.isOnline && (
@@ -45,18 +45,7 @@ const ChatHeader = ({ activeChat, onBack }: ChatHeaderProps) => {
                 </div>
             </div>
 
-            {/* Right Section: Actions */}
-            <div className='flex items-center gap-2 md:gap-4'>
-                {/* Search in Conversation */}
-                <button className='p-2.5 text-white/30 hover:text-[#BA9EFF] hover:bg-white/5 rounded-xl transition-all'>
-                    <Search size={20} />
-                </button>
-
-                {/* More Options Dropdown Trigger */}
-                <button className='p-2.5 text-white/30 hover:text-[#BA9EFF] hover:bg-white/5 rounded-xl transition-all'>
-                    <MoreVertical size={20} />
-                </button>
-            </div>
+            
 
         </header>
     )

@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { LogOut, MoreHorizontal, Loader2 } from 'lucide-react'
+import { LogOut, Loader2 } from 'lucide-react'
 import { logout } from '@/lib/auth'
 import API from '@/lib/axios'
 
@@ -10,7 +10,7 @@ interface UserData {
   avatar?: string;
 }
 
-const UserProfile = () => {
+const UserProfile = ({ onProfileClick }: { onProfileClick: () => void }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,8 +44,10 @@ const UserProfile = () => {
   }
 
   return (
-    <div className='p-4 mt-auto'>
-      <div className='bg-white/5 border border-white/10 p-4 rounded-[2rem] flex items-center gap-3 group hover:bg-white/[0.08] transition-all duration-500'>
+    <div className='p-4 mt-auto'
+    onClick={onProfileClick}
+    >
+      <div className='bg-white/5 border border-white/10 p-4 rounded-[2rem] flex items-center gap-3 group hover:bg-white/8 transition-all duration-500'>
 
         {/* Avatar Section */}
         <div className='relative shrink-0'>
@@ -74,11 +76,6 @@ const UserProfile = () => {
           >
             <LogOut size={16} />
           </button>
-        </div>
-
-        {/* More Icon (Visible when not hovered) */}
-        <div className='group-hover:hidden text-white/20'>
-          <MoreHorizontal size={18} />
         </div>
 
       </div>
