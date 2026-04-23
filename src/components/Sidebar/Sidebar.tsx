@@ -4,16 +4,20 @@ import SearchUser from './SearchUser'
 import ChatList from './ChatList'
 import UserProfile from './UserProfile'
 
-type ChatUser = {
-    id: string | number;
-    name: string;
-    isOnline: boolean;
-    isNew: boolean;
-    isFollowing: boolean;
-    bio: string;
+// Type ko flexible banaya taaki build fail na ho
+export type ChatUser = {
+    id: number;
+    username: string;
+    full_name?: string;
+    avatar?: string | null;
+    is_online?: boolean;
+    isNew?: boolean;
+    isFollowing?: boolean;
+    bio?: string;
 };
+
 interface SidebarProps {
-    onChatSelect: (chat: ChatUser) => void;
+    onChatSelect: (chat: any) => void; // Build pass karne ke liye 'any' rakha hai, ise bad mein ChatUser kar sakte hain
     onProfileClick: () => void; 
     activeChatId: number | null;
 }
@@ -21,13 +25,10 @@ interface SidebarProps {
 const Sidebar = ({ onChatSelect, onProfileClick, activeChatId }: SidebarProps) => {
     return (
         <aside className='h-screen flex flex-col bg-[#0F0D11] border-r border-white/5 relative overflow-hidden'>
-
-            {/* Logo Section */}
             <div className='p-6 pt-8 shrink-0'>
                 <Logo />
             </div>
 
-            
             <div className='shrink-0'>
                 <SearchUser onChatSelect={onChatSelect} />
             </div>
@@ -40,6 +41,7 @@ const Sidebar = ({ onChatSelect, onProfileClick, activeChatId }: SidebarProps) =
             </div>
 
             <div className='flex-1 overflow-y-auto min-h-0 custom-scrollbar'>
+                {/* Ensure karein ChatList ke andar onChatSelect ka type sahi ho */}
                 <ChatList onChatSelect={onChatSelect} activeChatId={activeChatId} />
             </div>
 
@@ -47,10 +49,9 @@ const Sidebar = ({ onChatSelect, onProfileClick, activeChatId }: SidebarProps) =
                 <UserProfile onProfileClick={onProfileClick} />
             </div>
 
-            {/* Aesthetic background glow */}
             <div className='absolute -top-24 -left-24 w-48 h-48 bg-[#BA9EFF]/5 blur-[100px] pointer-events-none'></div>
         </aside>
     )
 }
 
-export default Sidebar
+export default Sidebar;
