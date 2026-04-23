@@ -111,7 +111,7 @@ const MyProfileView = () => {
                         <div className='w-32 h-32 md:w-40 md:h-40 rounded-full bg-[#1A161F] border-4 border-[#BA9EFF]/20 overflow-hidden flex items-center justify-center shadow-inner'>
                             {previewUrl ? (
                                 <img
-                                    src={previewUrl ? previewUrl : getFullImageUrl(profile?.avatar)}
+                                    src={previewUrl || getFullImageUrl(profile?.avatar) || "https://ui-avatars.com/api/?name=User"}
                                     alt="Avatar"
                                     className='w-full h-full object-cover'
                                     onError={(e: any) => e.target.src = "https://ui-avatars.com/api/?name=" + profile?.username}

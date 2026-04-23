@@ -1,10 +1,11 @@
 'use client'
 import React from 'react'
-import { ChevronLeft, MoreVertical, Search } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
 
 interface ChatHeaderProps {
     activeChat: any;
-    onBack?: () => void; // Mobile ke liye
+    onBack?: () => void; 
+    onShowProfile: () => void;
 }
 
 const ChatHeader = ({ activeChat, onBack }: ChatHeaderProps) => {

@@ -19,9 +19,9 @@ const UserProfile = ({ onProfileClick }: { onProfileClick: () => void }) => {
       try {
         const res = await API.get('/api/profiles/me/'); 
         setUser({
-          name: res.data.first_name + " " + res.data.last_name || res.data.username,
+          name: res.data.full_name,
           username: `@${res.data.username}`,
-          avatar: res.data.profile_picture // Agar aapne field banayi hai
+          avatar: res.data.avatar
         });
       } catch (err) {
         console.error("User profile fetch failed:", err);

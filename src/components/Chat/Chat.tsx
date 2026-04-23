@@ -7,8 +7,12 @@ import UserProfileView from '../Chat/UserProfileView' // Naya component
 
 const Chat = ({ activeChat, onBack }: any) => {
   const [showProfile, setShowProfile] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Jab bhi activeChat badle, check karein ki kya ye ek search result hai
+  const handleMessageSent = () => {
+    // Isse useEffect trigger hoga MessageArea mein
+    setRefreshTrigger(prev => prev + 1);
+  };
   useEffect(() => {
     if (activeChat?.isNew) {
       setShowProfile(true);
@@ -22,14 +26,14 @@ const Chat = ({ activeChat, onBack }: any) => {
   return (
     <main className='flex-1 flex flex-col h-screen bg-[#0D0B0F] relative'>
       <ChatHeader activeChat={activeChat} onBack={onBack} onShowProfile={() => setShowProfile(!showProfile)} />
-      
+
       <div className="flex-1 relative overflow-hidden flex flex-col">
         {showProfile ? (
           <UserProfileView user={activeChat} />
         ) : (
           <>
-            <MessageArea activeChat={activeChat} />
-            <ChatInput activeChat={activeChat} />
+            <MessageArea activeChat={activeChat} key={refreshTrigger}/>
+            <ChatInput activeChat={activeChat} onMessageSent={handleMessageSent}/>
           </>
         )}
       </div>

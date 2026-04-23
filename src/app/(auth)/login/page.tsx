@@ -38,11 +38,10 @@ const LoginPage = () => {
 
     try {
       const res = await API.post('/api/auth/login/', { username, password });
-
-      // ✅ Check status code
       if (res.status === 200) {
         if (res.data?.access && res.data?.refresh) {
           setTokens(res.data.access, res.data.refresh);
+          localStorage.setItem('username', res.data.username)
           toast.success("Login Successfull...")
           router.push('/dashboard');
         } else {

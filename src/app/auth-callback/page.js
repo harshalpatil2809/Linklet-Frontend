@@ -2,7 +2,7 @@
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
-import Auth_display from '../../components/Auth_display';
+import Auth_display from '../../components/ui/Auth_display';
 
 // 1. Ek chota internal component banaya jo SearchParams use karega
 function AuthLogic() {
