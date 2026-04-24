@@ -9,6 +9,14 @@ import API from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner"
 import Cookies from 'js-cookie'
+import { AxiosError } from "axios";
+
+
+interface ErrorList {
+  username?: string[];
+  email?: string[];
+  password?: string[];
+}
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('')
@@ -21,7 +29,7 @@ const RegisterPage = () => {
 
   const token = Cookies.get('access')
 
-  if(token){
+  if (token) {
     router.push('/dashboard')
   }
 
@@ -45,9 +53,16 @@ const RegisterPage = () => {
           router.push('/login');
         }, 2000);
       }
-    } catch (error: any) {
-      if (error.response) {
-        const message = error.response.data?.username?.[0] || error.response.data?.email?.[0] || "Registration failed";
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        const data = error.response?.data as ErrorList;
+
+        const message =
+          data?.username?.[0] ||
+          data?.email?.[0] ||
+          data?.password?.[0] ||
+          "Registration failed";
+
         toast.error(message);
       } else {
         toast.error("Network error. Please try again.");
@@ -63,8 +78,8 @@ const RegisterPage = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row items-center justify-center bg-[#0F0D11] text-white">
-      <Toaster position="top-right" richColors closeButton/>
-      
+      <Toaster position="top-right" richColors closeButton />
+
       {/* Left Side - Visuals (Same as Login) */}
       <div className="relative min-h-screen w-full md:w-1/2 overflow-hidden bg-[linear-gradient(135deg,#0F0D11_0%,#150524_25%,#200048_60%,#2A006A_100%)] hidden md:block">
         <div className="absolute top-80 left-10 w-40 h-40 rounded-full bg-purple-500/20 blur-3xl animate-pulse"></div>
@@ -89,10 +104,10 @@ const RegisterPage = () => {
         <div className="absolute bottom-16 ml-16 flex flex-col gap-4">
           <h2 className="text-lg font-medium text-white/80">Know about Developer</h2>
           <div className="flex items-center gap-6 bg-white/10 backdrop-blur-md border border-white/10 w-fit px-6 py-3 rounded-full">
-            <Link href='https://github.com/harshalpatil2809' target="_balnk"><FaGithub size={22} className={`${scaleup} text-white/80 hover:text-white`}/></Link>
-            <Link href='https://www.linkedin.com/in/harshal-patil-56a0b2293/' target="_blank"><FaLinkedinIn size={22} className={`${scaleup} text-white/80 hover:text-white`}/></Link>
-            <Link href='https://x.com/Patil_Harshal_5' target="_blank"><FaXTwitter size={22} className={`${scaleup} text-white/80 hover:text-white`}/></Link>
-            <Link href='https://harshalpatil.vercel.app/' target="_blank"><FaRegUser size={22} className={`${scaleup} text-white/80 hover:text-white`}/></Link>
+            <Link href='https://github.com/harshalpatil2809' target="_balnk"><FaGithub size={22} className={`${scaleup} text-white/80 hover:text-white`} /></Link>
+            <Link href='https://www.linkedin.com/in/harshal-patil-56a0b2293/' target="_blank"><FaLinkedinIn size={22} className={`${scaleup} text-white/80 hover:text-white`} /></Link>
+            <Link href='https://x.com/Patil_Harshal_5' target="_blank"><FaXTwitter size={22} className={`${scaleup} text-white/80 hover:text-white`} /></Link>
+            <Link href='https://harshalpatil.vercel.app/' target="_blank"><FaRegUser size={22} className={`${scaleup} text-white/80 hover:text-white`} /></Link>
           </div>
         </div>
       </div>
@@ -101,7 +116,7 @@ const RegisterPage = () => {
       <div className="w-full md:w-1/2 min-h-screen flex flex-col items-center justify-center p-8 bg-[#0F0D11]">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center md:hidden mb-8">
-             <h1 className="text-4xl font-bold text-[#BA9EFF]">Linklet</h1>
+            <h1 className="text-4xl font-bold text-[#BA9EFF]">Linklet</h1>
           </div>
 
           <div className="space-y-2">
@@ -112,42 +127,42 @@ const RegisterPage = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <label className="text-sm font-medium text-white/70 ml-1">Email Address</label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 required
                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-[#BA9EFF] focus:ring-1 focus:ring-[#BA9EFF] transition-all"
                 placeholder="email@example.com"
-                value={email} 
-                onChange={(e)=>setEmail(e.target.value)} 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-white/70 ml-1">Username</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 required
                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-[#BA9EFF] focus:ring-1 focus:ring-[#BA9EFF] transition-all"
                 placeholder="Username"
-                value={username} 
-                onChange={(e)=>setUsername(e.target.value)} 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-white/70 ml-1">Password</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 required
                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-[#BA9EFF] focus:ring-1 focus:ring-[#BA9EFF] transition-all"
                 placeholder="Password"
-                value={password} 
-                onChange={(e)=>setPassword(e.target.value)} 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               className="w-full bg-[#BA9EFF] text-black font-bold py-4 rounded-2xl hover:bg-[#a686ff] transition-colors shadow-[0_0_20px_rgba(186,158,255,0.2)] disabled:opacity-50 mt-2"
             >

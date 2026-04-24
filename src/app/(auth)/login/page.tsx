@@ -62,7 +62,7 @@ const LoginPage = () => {
           toast.error(message);
         }
       } else {
-        toast.error("Network error. Please try again.");
+        toast.error("Username or Password must be Wrong.");
       }
     } finally {
       setLoading(false);
