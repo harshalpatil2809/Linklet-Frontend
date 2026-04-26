@@ -10,7 +10,7 @@ const Auth_display = () => {
     ];
 
     return (
-        <div className="h-full w-full flex items-center justify-center bg-[#0D0B0F] p-6 md:p-12">
+        <div className="h-screen w-full flex items-center justify-center bg-[#0D0B0F] p-6 md:p-12">
             {/* Main Glassy Container with Gradient Border */}
             <div className="relative group w-full max-w-lg aspect-square">
                 {/* Animated Gradient Background Glow */}
