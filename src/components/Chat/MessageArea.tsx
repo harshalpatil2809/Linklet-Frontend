@@ -16,6 +16,8 @@ interface MessageAreaProps {
         username: string;
         full_name?: string;
     } | null;
+
+    messages: any[];
 }
 
 const MessageArea = ({ activeChat }: MessageAreaProps) => {

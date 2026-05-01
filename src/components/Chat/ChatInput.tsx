@@ -10,16 +10,16 @@ interface ChatInputProps {
         id: number;
         username: string;
     } | null;
-    onMessageSent: () => void; // Isse hum MessageArea ko refresh karwayenge
+    onMessageSent: () => void;
+    sendMessage: (messageText: string) => void; // Yeh naya prop add kiya hai
 }
 
-const ChatInput = ({ activeChat, onMessageSent }: ChatInputProps) => {
+const ChatInput = ({ activeChat, onMessageSent, sendMessage }: ChatInputProps) => {
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
     const [showEmoji, setShowEmoji] = useState(false)
     const emojiRef = useRef<HTMLDivElement>(null)
 
-    // Emoji picker ke bahar click karne par use band karne ke liye
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (emojiRef.current && !emojiRef.current.contains(event.target as Node)) {
@@ -33,17 +33,20 @@ const ChatInput = ({ activeChat, onMessageSent }: ChatInputProps) => {
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!message.trim() || !activeChat?.id || loading) return
-        console.log(activeChat.id)
+
         setLoading(true)
         try {
-            // Aapke backend route ke hisab se call
+            // 1. WebSocket ke through message bhejein (Real-time ke liye)
+            sendMessage(message)
+
+            // 2. Agar database mein save karne ke liye API call ki zaroorat ho
             await API.post(`/api/messaging/send/${activeChat.id}/`, {
                 text: message.trim()
             })
             
             setMessage('')
             setShowEmoji(false)
-            onMessageSent() // Message bhejne ke baad history refresh karne ke liye callback
+            onMessageSent() // Yeh MessageArea ko refresh karega
         } catch (err) {
             toast.error("Message send nahi ho saka")
             console.error(err)
@@ -115,4 +118,4 @@ const ChatInput = ({ activeChat, onMessageSent }: ChatInputProps) => {
     )
 }
 
-export default ChatInput
+export default ChatInput;
