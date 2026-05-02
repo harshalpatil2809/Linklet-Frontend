@@ -11,7 +11,7 @@ const Chat = ({ activeChat, onBack }: any) => {
   const [messages, setMessages] = useState<any[]>([]);
   const ws = useRef<WebSocket | null>(null);
 
-  const myId = 1; 
+  const myId = localStorage.getItem("userid"); 
 
   useEffect(() => {
     if (activeChat?.isNew) {

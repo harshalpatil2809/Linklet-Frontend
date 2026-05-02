@@ -43,7 +43,7 @@ const LoginPage = () => {
         if (res.data?.access && res.data?.refresh) {
           setTokens(res.data.access, res.data.refresh);
           localStorage.setItem('username', res.data.username)
-          localStorage.setItem('username', res.data.userid)
+          localStorage.setItem('userid', res.data.userid)
           toast.success("Login Successfull...")
           router.push('/dashboard');
         } else {

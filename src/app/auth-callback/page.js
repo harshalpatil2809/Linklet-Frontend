@@ -12,10 +12,12 @@ function AuthLogic() {
     useEffect(() => {
         const access = searchParams.get("access");
         const refresh = searchParams.get("refresh");
+        const userid = searchParams.get("userid")
 
         if (access && refresh) {
             Cookies.set("access", access, { expires: 7, secure: true });
             Cookies.set("refresh", refresh, { expires: 7, secure: true });
+            localStorage.setItem("userid", userid)
             window.location.href = "/dashboard";
         } else {
             router.push("/login?error=social-login-failed");
