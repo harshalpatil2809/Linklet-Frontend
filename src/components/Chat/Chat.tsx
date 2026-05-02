@@ -8,10 +8,10 @@ import UserProfileView from '../Chat/UserProfileView'
 const Chat = ({ activeChat, onBack }: any) => {
   const [showProfile, setShowProfile] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  // Real-time messages state aur WebSocket ref
   const [messages, setMessages] = useState<any[]>([]);
   const ws = useRef<WebSocket | null>(null);
+
+  const myId = 1; 
 
   useEffect(() => {
     if (activeChat?.isNew) {
@@ -20,24 +20,25 @@ const Chat = ({ activeChat, onBack }: any) => {
       setShowProfile(false);
     }
 
-    // Har naye chat/chatId ke liye WebSocket connect karein
     if (activeChat?.id) {
-      const isProduction = process.env.NODE_ENV === 'production';
+      const otherUserId = activeChat.id;
+      const roomId = myId < otherUserId ? `${myId}_${otherUserId}` : `${otherUserId}_${myId}`;
 
+      const isProduction = process.env.NODE_ENV === 'production';
       const wsBaseUrl = isProduction
         ? 'wss://linklet-backend-efe3.onrender.com'
         : 'ws://localhost:8000';
 
-      const wsUrl = `${wsBaseUrl}/ws/chat/${activeChat.id}/`;
+      const wsUrl = `${wsBaseUrl}/ws/chat/${roomId}/`;
       ws.current = new WebSocket(wsUrl);
 
       ws.current.onopen = () => {
-        console.log("WebSocket Connected for Chat ID:", activeChat.id);
+        console.log("WebSocket Connected for Room ID:", roomId);
       };
 
       ws.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("🟢 Naya Message Aaya:", data);
+        console.log("Naya Message Aaya:", data);
         setMessages((prev) => [...prev, data]);
       };
 
@@ -49,7 +50,6 @@ const Chat = ({ activeChat, onBack }: any) => {
         console.log("WebSocket Disconnected");
       };
 
-      // Component unmount hone par connection close karein
       return () => {
         if (ws.current) {
           ws.current.close();
@@ -58,12 +58,11 @@ const Chat = ({ activeChat, onBack }: any) => {
     }
   }, [activeChat]);
 
-  // Message bhejne ka function
   const sendMessage = (messageText: string) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN && messageText.trim() !== '') {
       ws.current.send(JSON.stringify({
         message: messageText,
-        sender_id: 1 // Yahan apna dynamic user ID (jaise auth user ka ID) dal sakte hain
+        sender_id: myId
       }));
     }
   };
@@ -87,10 +86,7 @@ const Chat = ({ activeChat, onBack }: any) => {
           <UserProfileView user={activeChat} />
         ) : (
           <>
-            {/* Messages pass karein taaki MessageArea real-time data read kare */}
             <MessageArea activeChat={activeChat} messages={messages} key={refreshTrigger} />
-
-            {/* ChatInput mein sendMessage function pass karein */}
             <ChatInput
               activeChat={activeChat}
               onMessageSent={handleMessageSent}
