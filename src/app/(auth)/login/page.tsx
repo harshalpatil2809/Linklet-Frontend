@@ -38,6 +38,7 @@ const LoginPage = () => {
 
     try {
       const res = await API.post('/api/auth/login/', { username, password });
+      console.log(res.data)
       if (res.status === 200) {
         if (res.data?.access && res.data?.refresh) {
           setTokens(res.data.access, res.data.refresh);
