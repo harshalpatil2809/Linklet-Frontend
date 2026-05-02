@@ -37,6 +37,7 @@ const Chat = ({ activeChat, onBack }: any) => {
 
       ws.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        console.log("🟢 Naya Message Aaya:", data);
         setMessages((prev) => [...prev, data]);
       };
 
