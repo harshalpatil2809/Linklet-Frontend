@@ -9,9 +9,14 @@ const Chat = ({ activeChat, onBack }: any) => {
   const [showProfile, setShowProfile] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [messages, setMessages] = useState<any[]>([]);
+  const [myId, setMyId] = useState<string | null>(null);
   const ws = useRef<WebSocket | null>(null);
 
-  const myId = localStorage.getItem("userid"); 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setMyId(localStorage.getItem("userid"));
+    }
+  }, []);
 
   useEffect(() => {
     if (activeChat?.isNew) {
@@ -20,9 +25,10 @@ const Chat = ({ activeChat, onBack }: any) => {
       setShowProfile(false);
     }
 
-    if (activeChat?.id) {
-      const otherUserId = activeChat.id;
-      const roomId = myId < otherUserId ? `${myId}_${otherUserId}` : `${otherUserId}_${myId}`;
+    if (activeChat?.id && myId) {
+      const otherUserId = Number(activeChat.id);
+      const currentUserId = Number(myId);
+      const roomId = currentUserId < otherUserId ? `${currentUserId}_${otherUserId}` : `${otherUserId}_${currentUserId}`;
 
       const isProduction = process.env.NODE_ENV === 'production';
       const wsBaseUrl = isProduction
@@ -56,7 +62,7 @@ const Chat = ({ activeChat, onBack }: any) => {
         }
       };
     }
-  }, [activeChat]);
+  }, [activeChat, myId]);
 
   const sendMessage = (messageText: string) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN && messageText.trim() !== '') {
