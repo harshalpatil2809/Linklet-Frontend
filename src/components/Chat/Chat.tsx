@@ -92,7 +92,7 @@ const Chat = ({ activeChat, onBack }: any) => {
           <UserProfileView user={activeChat} />
         ) : (
           <>
-            <MessageArea activeChat={activeChat} messages={messages} key={refreshTrigger} />
+            <MessageArea activeChat={activeChat} messages={messages} />
             <ChatInput
               activeChat={activeChat}
               onMessageSent={handleMessageSent}
