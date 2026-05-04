@@ -1,9 +1,11 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import API from '@/lib/axios'
 
 interface Notification {
   id: number | string;
+  sender_id: number | string;
   sender_username: string;
   notification_type: string;
   is_read: boolean;
@@ -19,6 +21,7 @@ const NotificationBell = () => {
   
   const ws = useRef<WebSocket | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -64,6 +67,7 @@ const NotificationBell = () => {
         
         const newNotif = {
           id: Date.now(),
+          sender_id: data.sender_id,
           sender_username: data.sender_username,
           notification_type: data.notification_type,
           is_read: false,
@@ -93,6 +97,11 @@ const NotificationBell = () => {
     if (!isOpen && unreadCount > 0) {
       markAsRead();
     }
+  };
+
+  const handleNotificationClick = (notif: Notification) => {
+    setIsOpen(false);
+    router.push(`/chat?user=${notif.sender_username}`);
   };
 
   return (
@@ -128,7 +137,8 @@ const NotificationBell = () => {
               notifications.map((notif) => (
                 <div 
                   key={notif.id} 
-                  className={`p-4 border-b border-white/5 hover:bg-white/5 transition-colors flex gap-3 ${!notif.is_read ? 'bg-white/2' : ''}`}
+                  onClick={() => handleNotificationClick(notif)}
+                  className={`p-4 border-b border-white/5 hover:bg-white/10 transition-colors flex gap-3 cursor-pointer ${!notif.is_read ? 'bg-white/5' : ''}`}
                 >
                   <div className="h-10 w-10 rounded-full bg-[#BA9EFF]/20 flex items-center justify-center shrink-0 text-[#BA9EFF] font-bold uppercase">
                     {notif.sender_username.charAt(0)}
