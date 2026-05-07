@@ -1,13 +1,16 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import ChatHeader from './ChatHeader'
 import MessageArea from './MessageArea'
 import ChatInput from './ChatInput'
 import UserProfileView from '../Chat/UserProfileView'
 
-const Chat = ({ activeChat, onBack }: any) => {
+const ChatComponent = ({ activeChat: propActiveChat, onBack }: any) => {
+  const searchParams = useSearchParams();
+  const [activeChat, setActiveChat] = useState(propActiveChat);
   const [showProfile, setShowProfile] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [ setRefreshTrigger] = useState(0);
   const [messages, setMessages] = useState<any[]>([]);
   const [myId, setMyId] = useState<string | null>(null);
   const ws = useRef<WebSocket | null>(null);
@@ -19,12 +22,28 @@ const Chat = ({ activeChat, onBack }: any) => {
   }, []);
 
   useEffect(() => {
-    if (activeChat?.isNew) {
+    const view = searchParams.get('view');
+    const userId = searchParams.get('userId');
+    const username = searchParams.get('username');
+
+    if (view === 'profile' && userId && username) {
+      setActiveChat({ 
+        id: userId, 
+        username: username, 
+        name: username 
+      });
       setShowProfile(true);
     } else {
-      setShowProfile(false);
+      setActiveChat(propActiveChat);
+      if (propActiveChat?.isNew) {
+        setShowProfile(true);
+      } else {
+        setShowProfile(false);
+      }
     }
+  }, [searchParams, propActiveChat]);
 
+  useEffect(() => {
     if (activeChat?.id && myId) {
       const otherUserId = Number(activeChat.id);
       const currentUserId = Number(myId);
@@ -102,6 +121,14 @@ const Chat = ({ activeChat, onBack }: any) => {
         )}
       </div>
     </main>
+  )
+}
+
+const Chat = (props: any) => {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-[#BA9EFF]">Loading chat...</div>}>
+      <ChatComponent {...props} />
+    </Suspense>
   )
 }
 

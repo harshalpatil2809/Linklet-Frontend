@@ -18,7 +18,6 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [myId, setMyId] = useState<string | null>(null);
-  
   const ws = useRef<WebSocket | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -101,7 +100,7 @@ const NotificationBell = () => {
 
   const handleNotificationClick = (notif: Notification) => {
     setIsOpen(false);
-    router.push(`/chat?user=${notif.sender_username}`);
+    router.push(`/chat?view=profile&userId=${notif.sender_id}&username=${notif.sender_username}`);
   };
 
   return (
@@ -166,3 +165,4 @@ const NotificationBell = () => {
 }
 
 export default NotificationBell
+
