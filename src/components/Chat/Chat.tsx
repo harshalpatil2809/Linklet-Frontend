@@ -29,8 +29,8 @@ const ChatComponent = ({ activeChat: propActiveChat, onBack }: any) => {
     if (view === 'profile' && userId && username) {
       setActiveChat({ 
         id: userId, 
-        username: username, 
-        name: username 
+        username: decodeURIComponent(username), 
+        name: decodeURIComponent(username) 
       });
       setShowProfile(true);
     } else {
@@ -128,7 +128,7 @@ const Chat = (props: any) => {
   return (
     <Suspense fallback={<div className="flex-1 flex items-center justify-center text-[#BA9EFF]">Loading chat...</div>}>
       <ChatComponent {...props} />
-    </Suspense>
+    </ Suspense>
   )
 }
 

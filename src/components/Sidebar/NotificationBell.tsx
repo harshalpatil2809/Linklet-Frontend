@@ -10,7 +10,7 @@ interface Notification {
   notification_type: string;
   is_read: boolean;
   created_at: string;
-  message?: string; 
+  message?: string;
 }
 
 const NotificationBell = () => {
@@ -63,7 +63,7 @@ const NotificationBell = () => {
 
       ws.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        
+
         const newNotif = {
           id: Date.now(),
           sender_id: data.sender_id,
@@ -100,12 +100,12 @@ const NotificationBell = () => {
 
   const handleNotificationClick = (notif: Notification) => {
     setIsOpen(false);
-    router.push(`/chat?view=profile&userId=${notif.sender_id}&username=${notif.sender_username}`);
+    router.push(`/chat?view=profile&userId=${notif.sender_id}&username=${encodeURIComponent(notif.sender_username)}`);
   };
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button 
+      <button
         onClick={handleToggle}
         className="relative p-2 text-white/70 hover:text-white transition-colors rounded-full hover:bg-white/5"
       >
@@ -126,7 +126,7 @@ const NotificationBell = () => {
           <div className="p-4 border-b border-white/10 flex justify-between items-center bg-[#0D0B0F]">
             <h3 className="font-semibold text-white">Notifications</h3>
           </div>
-          
+
           <div className="max-h-100 overflow-y-auto custom-scrollbar">
             {notifications.length === 0 ? (
               <div className="p-6 text-center text-white/40 text-sm">
@@ -134,8 +134,8 @@ const NotificationBell = () => {
               </div>
             ) : (
               notifications.map((notif) => (
-                <div 
-                  key={notif.id} 
+                <div
+                  key={notif.id}
                   onClick={() => handleNotificationClick(notif)}
                   className={`p-4 border-b border-white/5 hover:bg-white/10 transition-colors flex gap-3 cursor-pointer ${!notif.is_read ? 'bg-white/5' : ''}`}
                 >
@@ -144,7 +144,7 @@ const NotificationBell = () => {
                   </div>
                   <div className="flex flex-col flex-1">
                     <p className="text-sm text-white/90 leading-tight">
-                      <span className="font-semibold">{notif.sender_username}</span> 
+                      <span className="font-semibold">{notif.sender_username}</span>
                       {notif.notification_type === 'follow_request' ? ' started following you.' : ' sent you a notification.'}
                     </p>
                     <span className="text-[11px] text-white/40 mt-1">
