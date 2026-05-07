@@ -10,7 +10,7 @@ const ChatComponent = ({ activeChat: propActiveChat, onBack }: any) => {
   const searchParams = useSearchParams();
   const [activeChat, setActiveChat] = useState(propActiveChat);
   const [showProfile, setShowProfile] = useState(false);
-  const [ setRefreshTrigger] = useState(0);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [messages, setMessages] = useState<any[]>([]);
   const [myId, setMyId] = useState<string | null>(null);
   const ws = useRef<WebSocket | null>(null);
