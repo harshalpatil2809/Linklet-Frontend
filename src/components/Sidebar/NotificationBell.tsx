@@ -100,7 +100,7 @@ const NotificationBell = () => {
 
   const handleNotificationClick = (notif: Notification) => {
     setIsOpen(false);
-    router.push(`/chat?view=profile&userId=${notif.sender_id}&username=${encodeURIComponent(notif.sender_username)}`);
+    router.push(`/?view=profile&userId=${notif.sender_id}&username=${encodeURIComponent(notif.sender_username)}`);
   };
 
   return (
