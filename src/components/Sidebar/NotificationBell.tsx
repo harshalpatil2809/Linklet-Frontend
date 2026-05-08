@@ -1,6 +1,5 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
 import API from '@/lib/axios'
 
 interface Notification {
@@ -13,14 +12,17 @@ interface Notification {
   message?: string;
 }
 
-const NotificationBell = () => {
+interface NotificationBellProps {
+  onChatSelect: (user: any) => void;
+}
+
+const NotificationBell = ({ onChatSelect }: NotificationBellProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [myId, setMyId] = useState<string | null>(null);
   const ws = useRef<WebSocket | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -100,7 +102,14 @@ const NotificationBell = () => {
 
   const handleNotificationClick = (notif: Notification) => {
     setIsOpen(false);
-    router.push(`/?view=profile&userId=${notif.sender_id}&username=${encodeURIComponent(notif.sender_username)}`);
+    onChatSelect({
+      id: notif.sender_id,
+      name: notif.sender_username,
+      isOnline: true,
+      isNew: true,
+      isFollowing: false,
+      bio: 'Available on Linklet',
+    });
   };
 
   return (

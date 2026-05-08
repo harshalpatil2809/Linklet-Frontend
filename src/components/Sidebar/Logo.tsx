@@ -3,7 +3,11 @@ import { TiMessages } from "react-icons/ti";
 import Link from 'next/link';
 import NotificationBell from "./NotificationBell";
 
-const Logo = () => {
+interface LogoProps {
+  onChatSelect: (user: any) => void;
+}
+
+const Logo = ({ onChatSelect }: LogoProps) => {
     return (
 
         <div className="flex items-center justify-between">
@@ -28,7 +32,7 @@ const Logo = () => {
             </Link>
 
             <div className="flex items-center gap-4">
-                    <NotificationBell />
+                    <NotificationBell onChatSelect={onChatSelect} />
                 </div>
 
         </div>

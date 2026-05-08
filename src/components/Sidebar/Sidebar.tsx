@@ -26,7 +26,7 @@ const Sidebar = ({ onChatSelect, onProfileClick, activeChatId }: SidebarProps) =
     return (
         <aside className='h-screen flex flex-col bg-[#0F0D11] border-r border-white/5 relative overflow-hidden'>
             <div className='p-6 pt-8 shrink-0'>
-                <Logo />
+                <Logo onChatSelect={onChatSelect} />
             </div>
 
             <div className='shrink-0'>
