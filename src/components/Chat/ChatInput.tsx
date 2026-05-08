@@ -76,12 +76,7 @@ const ChatInput = ({ activeChat, onMessageSent, sendMessage }: ChatInputProps) =
                 onSubmit={handleSend}
                 className='max-w-6xl mx-auto flex items-center gap-3'
             >
-                <button
-                    type="button"
-                    className='p-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-[#BA9EFF] hover:border-[#BA9EFF]/30 transition-all'
-                >
-                    <Plus size={22} />
-                </button>
+                
 
                 <div className='flex-1 relative flex items-center group'>
                     <input

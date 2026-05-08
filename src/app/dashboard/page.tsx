@@ -31,7 +31,7 @@ const DashboardPage = () => {
       <Toaster position='top-right' expand={false} richColors />
 
       {/* Sidebar Section */}
-      <div className={`w-full md:w-[30%] lg:w-[25%] border-r border-white/5 ${activeChat && viewMode === 'chat' ? 'hidden md:block' : 'block'}`}>
+      <div className={`w-full md:w-[30%] lg:w-[25%] border-r border-white/5 ${(activeChat && viewMode === 'chat') || viewMode === 'my-profile' ? 'hidden md:block' : 'block'}`}>
         <Sidebar
           onChatSelect={(user: any) => {
             setActiveChat(user);

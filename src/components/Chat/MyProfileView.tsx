@@ -1,10 +1,12 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react'
-import { Edit2, Save, X, Camera, Loader2 } from 'lucide-react'
+import { Edit2, Save, X, Camera, Loader2, ArrowLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import API from '@/lib/axios'
 import { toast } from 'sonner'
 
 const MyProfileView = () => {
+    const router = useRouter()
     const [profile, setProfile] = useState<any>(null)
     const [isEditing, setIsEditing] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -22,8 +24,6 @@ const MyProfileView = () => {
             const res = await API.get('/api/profiles/me/')
             const data = res.data
             setProfile(data)
-            console.log(data)
-            // Backend se data sync karein
             setFormData({
                 full_name: data.full_name || '',
                 bio: data.bio || ''
@@ -54,7 +54,6 @@ const MyProfileView = () => {
         setSaving(true)
         const data = new FormData()
 
-        // Ensure karein ki fields undefined na bheji jayein
         data.append('full_name', formData.full_name || '')
         data.append('bio', formData.bio || '')
 
@@ -94,7 +93,7 @@ const MyProfileView = () => {
         if (!path) return null;
 
         if (path.startsWith('http')) return path;
-        const backendUrl = "http://127.0.0.1:8000"; 
+        const backendUrl = "https://linklet-backend-efe3.onrender.com"; 
         return `${backendUrl}${path}`;
     };
 
@@ -104,6 +103,14 @@ const MyProfileView = () => {
 
                 {/* Header Glow */}
                 <div className='absolute top-0 left-0 w-full h-32 bg-linear-to-b from-[#BA9EFF]/10 to-transparent'></div>
+
+                {/* Back Button */}
+                <button
+                    onClick={() => router.back()}
+                    className='absolute top-6 left-6 p-2 hover:bg-white/10 rounded-full transition-all z-10'
+                >
+                    <ArrowLeft size={24} className='text-white' />
+                </button>
 
                 <div className='relative flex flex-col items-center'>
                     {/* Avatar Section */}
@@ -128,13 +135,6 @@ const MyProfileView = () => {
                             className='hidden'
                             accept="image/*"
                         />
-
-                        <button
-                            onClick={() => fileInputRef.current?.click()}
-                            className='absolute bottom-2 right-2 p-3 bg-[#BA9EFF] text-black rounded-full shadow-xl hover:scale-110 transition-all active:scale-90'
-                        >
-                            <Camera size={20} />
-                        </button>
                     </div>
 
                     {isEditing ? (
@@ -173,7 +173,7 @@ const MyProfileView = () => {
                             </h2>
                             <p className='text-[#BA9EFF] font-bold uppercase tracking-widest text-xs mb-6'>@{profile?.username}</p>
 
-                            <div className='bg-white/5 border border-white/10 p-6 rounded-[2.5rem] mb-8 min-h-[100px] flex items-center justify-center'>
+                            <div className='bg-white/5 border border-white/10 p-6 rounded-[2.5rem] mb-8 min-h-25 flex items-center justify-center'>
                                 <p className='text-white/60 leading-relaxed italic'>
                                     {profile?.bio || "No bio added yet. Click edit to introduce yourself!"}
                                 </p>
