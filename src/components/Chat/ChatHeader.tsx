@@ -1,55 +1,98 @@
-'use client'
-import React from 'react'
-import { ChevronLeft } from 'lucide-react'
+"use client";
+
+import React from "react";
+import { ChevronLeft, UserRound } from "lucide-react";
 
 interface ChatHeaderProps {
-    activeChat: any;
-    onBack?: () => void; 
+    activeChat: {
+        id?: string | number;
+        name?: string;
+        isOnline?: boolean;
+        avatar?: string | null;
+    } | null;
+    onBack?: () => void;
     onShowProfile: () => void;
 }
 
-const ChatHeader = ({ activeChat, onBack }: ChatHeaderProps) => {
+const ChatHeader = ({
+    activeChat,
+    onBack,
+    onShowProfile,
+}: ChatHeaderProps) => {
     if (!activeChat) return null;
 
+    const name = activeChat.name?.trim() || "User";
+    const isOnline = activeChat.isOnline === true;
+
     return (
-        <header className='p-4 md:p-6 border-b border-white/5 bg-[#0F0D11]/60 backdrop-blur-xl flex justify-between items-center shrink-0 z-10'>
-
-            {/* Left Section: Back Button + User Info */}
-            <div className='flex items-center gap-3 md:gap-4'>
-                {/* Back Button (Visible only on Mobile) */}
+        <header className="z-10 flex shrink-0 items-center gap-3 border-b border-(--color-border) bg-[#0f0f0f] px-3 py-3 sm:px-5 sm:py-4">
+            {/* Back Button */}
+            {onBack && (
                 <button
+                    type="button"
                     onClick={onBack}
-                    className='md:hidden p-2 -ml-2 text-white/50 hover:text-white transition-colors'
+                    aria-label="Back to chats"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-(--color-text-muted) transition-colors hover:bg-white/5 hover:text-(--color-text) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-border-focus) md:hidden"
                 >
-                    <ChevronLeft size={28} />
+                    <ChevronLeft size={21} />
                 </button>
+            )}
 
-                {/* User Avatar with Online Indicator */}
-                <div className='relative'>
-                    <div className='w-10 h-10 md:w-12 md:h-12 rounded-full bg-linear-to-br from-[#BA9EFF] to-[#43237A] border-2 border-white/10 flex items-center justify-center text-black font-bold text-lg'>
-                        {activeChat.name[0]}
-                    </div>
-                    {activeChat.isOnline && (
-                        <div className='absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#0F0D11] rounded-full'></div>
+            {/* Clickable User Profile */}
+            <button
+                type="button"
+                onClick={onShowProfile}
+                aria-label={`View ${name}'s profile`}
+                className="flex min-w-0 flex-1 items-center gap-3 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-border-focus)"
+            >
+                {/* Avatar */}
+                <div className="relative shrink-0">
+                    {activeChat.avatar ? (
+                        <img
+                            src={activeChat.avatar}
+                            alt=""
+                            className="h-10 w-10 rounded-full border border-(--color-border) object-cover sm:h-11 sm:w-11"
+                        />
+                    ) : (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface-hover) text-sm font-semibold text-(--color-primary) sm:h-11 sm:w-11">
+                            {name !== "User" ? (
+                                name.charAt(0).toUpperCase()
+                            ) : (
+                                <UserRound size={19} />
+                            )}
+                        </div>
                     )}
+
+                    {/* Online Indicator */}
+                    <span
+                        className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-[#101813] ${isOnline
+                                ? "bg-(--color-success)"
+                                : "bg-(--color-text-subtle)"
+                            }`}
+                        title={isOnline ? "Online" : "Offline"}
+                        aria-label={isOnline ? "Online" : "Offline"}
+                    />
                 </div>
 
                 {/* Name and Status */}
-                <div className='flex flex-col'>
-                    <h2 className='text-sm md:text-lg font-bold text-white tracking-tight leading-tight'>
-                        {activeChat.name}
+                <div className="min-w-0 flex-1">
+                    <h2 className="truncate text-sm font-semibold leading-5 text-(--color-text) sm:text-base">
+                        {name}
                     </h2>
-                    <span className='text-[10px] md:text-xs font-medium text-green-500/80 mt-0.5 flex items-center gap-1.5'>
-                        <span className='w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse'></span>
-                        Online
-                    </span>
+
+                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-(--color-text-subtle)">
+                        <span
+                            className={`h-1.5 w-1.5 shrink-0 rounded-full ${isOnline
+                                    ? "bg-(--color-success)"
+                                    : "bg-(--color-text-subtle)"
+                                }`}
+                        />
+                        {isOnline ? "Online" : "Offline"}
+                    </p>
                 </div>
-            </div>
-
-            
-
+            </button>
         </header>
-    )
-}
+    );
+};
 
-export default ChatHeader
+export default ChatHeader;

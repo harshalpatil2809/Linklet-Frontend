@@ -27,10 +27,10 @@ const ChatComponent = ({ activeChat: propActiveChat, onBack }: any) => {
     const username = searchParams.get('username');
 
     if (view === 'profile' && userId && username) {
-      setActiveChat({ 
-        id: userId, 
-        username: decodeURIComponent(username), 
-        name: decodeURIComponent(username) 
+      setActiveChat({
+        id: userId,
+        username: decodeURIComponent(username),
+        name: decodeURIComponent(username)
       });
       setShowProfile(true);
     } else {
@@ -43,45 +43,94 @@ const ChatComponent = ({ activeChat: propActiveChat, onBack }: any) => {
     }
   }, [searchParams, propActiveChat]);
 
+
   useEffect(() => {
-    if (activeChat?.id && myId) {
-      const otherUserId = Number(activeChat.id);
-      const currentUserId = Number(myId);
-      const roomId = currentUserId < otherUserId ? `${currentUserId}_${otherUserId}` : `${otherUserId}_${currentUserId}`;
+    if (!activeChat?.id || !myId) return;
 
-      const isProduction = process.env.NODE_ENV === 'production';
-      const wsBaseUrl = isProduction
-        ? 'wss://linklet-backend-efe3.onrender.com'
-        : 'ws://localhost:8000';
+    const currentUserId = Number(myId);
+    const otherUserId = Number(activeChat.id);
 
-      const wsUrl = `${wsBaseUrl}/ws/chat/${roomId}/`;
-      ws.current = new WebSocket(wsUrl);
-
-      ws.current.onopen = () => {
-        console.log("WebSocket Connected for Room ID:", roomId);
-      };
-
-      ws.current.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log("Naya Message Aaya:", data);
-        setMessages((prev) => [...prev, data]);
-      };
-
-      ws.current.onerror = (error) => {
-        console.error("WebSocket Error:", error);
-      };
-
-      ws.current.onclose = () => {
-        console.log("WebSocket Disconnected");
-      };
-
-      return () => {
-        if (ws.current) {
-          ws.current.close();
-        }
-      };
+    // Don't attempt a connection with invalid IDs.
+    if (
+      !Number.isInteger(currentUserId) ||
+      !Number.isInteger(otherUserId) ||
+      currentUserId <= 0 ||
+      otherUserId <= 0 ||
+      currentUserId === otherUserId
+    ) {
+      console.error("Invalid chat participant IDs:", {
+        currentUserId,
+        otherUserId,
+      });
+      return;
     }
-  }, [activeChat, myId]);
+
+    // Both users must calculate the same room ID.
+    const roomId =
+      currentUserId < otherUserId
+        ? `${currentUserId}_${otherUserId}`
+        : `${otherUserId}_${currentUserId}`;
+
+    const wsBaseUrl =
+      process.env.NEXT_PUBLIC_WS_URL ||
+      (window.location.protocol === "https:"
+        ? "wss://linklet-backend-efe3.onrender.com"
+        : "ws://localhost:8000");
+
+    const wsUrl = `${wsBaseUrl.replace(/\/$/, "")}/ws/chat/${roomId}/`;
+
+    console.log("Connecting to chat WebSocket:", wsUrl);
+
+    const socket = new WebSocket(wsUrl);
+    ws.current = socket;
+
+    socket.onopen = () => {
+      console.log("WebSocket connected. Room ID:", roomId);
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("New message received:", data);
+        setMessages((prev) => [...prev, data]);
+      } catch (error) {
+        console.error("Invalid WebSocket message:", error);
+      }
+    };
+
+    socket.onerror = () => {
+      console.error(
+        "WebSocket connection failed. Check the backend server, routing, and browser Network > WS."
+      );
+    };
+
+    socket.onclose = (event) => {
+      console.log("WebSocket closed:", {
+        code: event.code,
+        reason: event.reason,
+        wasClean: event.wasClean,
+      });
+
+      if (ws.current === socket) {
+        ws.current = null;
+      }
+    };
+
+    return () => {
+      // Close only this effect's connection.
+      if (
+        socket.readyState === WebSocket.CONNECTING ||
+        socket.readyState === WebSocket.OPEN
+      ) {
+        socket.close();
+      }
+
+      if (ws.current === socket) {
+        ws.current = null;
+      }
+    };
+  }, [activeChat?.id, myId]);
+
 
   const sendMessage = (messageText: string) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN && messageText.trim() !== '') {
