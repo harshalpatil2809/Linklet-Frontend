@@ -90,59 +90,32 @@ export default function MyProfileView() {
             const data = response.data;
 
             setProfile(data);
-            console.log(data)
+
             setFormData({
                 full_name: data.full_name ?? '',
                 bio: data.bio ?? '',
             });
+
             setPreviewUrl(getFullImageUrl(data.avatar));
             setSelectedFile(null);
             setAvatarFailed(false);
+
         } catch (error) {
             console.error('Failed to load profile:', error);
+
+            setProfile(null);
+
             toast.error('Unable to load your profile.');
+
         } finally {
             setLoading(false);
         }
     }, []);
 
-    
-
     useEffect(() => {
-        let active = true;
+        void fetchMyData();
+    }, [fetchMyData]);
 
-        const loadProfile = async () => {
-            try {
-                const response = await API.get<UserProfile>(
-                    '/api/profiles/me/'
-                );
-
-                if (!active) return;
-
-                const data = response.data;
-
-                setProfile(data);
-                setFormData({
-                    full_name: data.full_name ?? '',
-                    bio: data.bio ?? '',
-                });
-                setPreviewUrl(getFullImageUrl(data.avatar));
-            } catch (error) {
-                if (active) {
-                    console.error('Failed to load profile:', error);
-                    toast.error('Unable to load your profile.');
-                }
-            } finally {
-                if (active) setLoading(false);
-            }
-        };
-
-        void loadProfile();
-
-        return () => {
-            active = false;
-        };
-    }, []);
 
     // Release temporary avatar preview URLs.
     useEffect(() => {
