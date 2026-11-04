@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import {
   FaGithub,
   FaLinkedinIn,
@@ -20,7 +20,7 @@ import { setTokens } from '@/lib/auth';
 
 
 
-const LoginPage = () => {
+const LoginContent = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -92,6 +92,7 @@ const LoginPage = () => {
 
 
   return (
+    
     <main className="relative isolate min-h-screen overflow-hidden bg-(--color-bg) text-(--color-text)">
 
 
@@ -373,4 +374,13 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+
+
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <LoginContent />
+    </Suspense>
+  );
+}
