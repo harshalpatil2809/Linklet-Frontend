@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   FaGithub,
   FaLinkedinIn,
@@ -13,12 +13,12 @@ import { TiMessages } from 'react-icons/ti';
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast, Toaster } from 'sonner';
-import Cookies from 'js-cookie';
-
 import API from '@/lib/axios';
 import { setTokens } from '@/lib/auth';
+
+
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -27,22 +27,15 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (Cookies.get('access')) {
-      router.replace('/dashboard');
-    }
-  }, [router]);
+  const error = searchParams.get("error");
+
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
-
-    if (!username.trim() || !password) {
-      toast.error('Please enter username and password');
-      return;
-    }
 
     setLoading(true);
 
@@ -52,6 +45,7 @@ const LoginPage = () => {
         password,
       });
 
+      console.log(res)
       if (res.status === 200) {
         if (res.data?.access && res.data?.refresh) {
           setTokens(res.data.access, res.data.refresh);
@@ -60,7 +54,7 @@ const LoginPage = () => {
           localStorage.setItem('userid', res.data.userid);
 
           toast.success('Login successful!');
-          router.push('/dashboard');
+          router.push('/');
         } else {
           toast.error('Login failed: Tokens not received');
         }
@@ -96,10 +90,20 @@ const LoginPage = () => {
       `${process.env.NEXT_PUBLIC_API_URL}/accounts/google/login/`;
   };
 
+
   return (
     <main className="relative isolate min-h-screen overflow-hidden bg-(--color-bg) text-(--color-text)">
 
-      {/* Existing forest background — unchanged */}
+
+      {
+        error === "social-login-failed" && (
+          <div className="absolute mb-5 rounded-lg border border-red-500/30 bg-red-500/30 px-4 py-3 text-sm text-white/60 w-full text-center">
+            Social login failed. Please try again or use email and password.
+          </div>
+        )
+      }
+
+      {/* forest Background  */}
       <Image
         src="/1.jpg"
         alt=""

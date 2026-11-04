@@ -1,12 +1,60 @@
-import React from 'react'
-import DashboardPage from './dashboard/page'
+'use client'
+import React, { useState, useEffect } from 'react'
+import { Toaster } from "@/components/ui/sonner"
+import Sidebar from '@/components/Sidebar/Sidebar'
+import Chat from '@/components/Chat/Chat'
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
+import MyProfileView from '@/components/Chat/MyProfileView'
 
-const page = () => {
+const DashboardPage = () => {
+  const [mounted, setMounted] = useState(false) 
+  const [activeChat, setActiveChat] = useState<any>(null)
+  const [viewMode, setViewMode] = useState<'chat' | 'my-profile'>('chat')
+  const router = useRouter()
+
+  useEffect(() => {
+    setMounted(true)
+    const token = Cookies.get('access')
+    if (!token) {
+      router.push('/login')
+    }
+  }, [router])
+
+  if (!mounted) return null
+
   return (
-    <div>
-      <DashboardPage />
+    <div className='flex h-screen w-full bg-[#0F0D11] overflow-hidden'>
+      <Toaster position='top-right' expand={false} richColors />
+
+      {/* Sidebar Section */}
+      <div className={`w-full md:w-[30%] lg:w-[25%] border-r border-white/5 ${(activeChat && viewMode === 'chat') || viewMode === 'my-profile' ? 'hidden md:block' : 'block'}`}>
+        <Sidebar
+          onChatSelect={(user: any) => {
+            setActiveChat(user);
+            setViewMode('chat');
+          }}
+          onProfileClick={() => {
+            setViewMode('my-profile');
+            setActiveChat(null);
+          }}
+          activeChatId={activeChat?.id}
+        />
+      </div>
+
+      {/* Main Content */}
+      <main className={`flex-1 flex flex-col h-full ${!activeChat && viewMode === 'chat' ? 'hidden md:flex' : 'flex'}`}>
+        {viewMode === 'my-profile' ? (
+          <MyProfileView />
+        ) : (
+          <Chat 
+            activeChat={activeChat} 
+            onBack={() => setActiveChat(null)} 
+          />
+        )}
+      </main>
     </div>
   )
 }
 
-export default page
+export default DashboardPage

@@ -1,17 +1,35 @@
-import Cookies from 'js-cookie';
 
-const ACCESS_TOKEN_KEY = 'access';
-const REFRESH_TOKEN_KEY = 'refresh';
+import Cookies from "js-cookie";
 
-export const setTokens = (access: string, refresh: string) => {
-  Cookies.set(ACCESS_TOKEN_KEY, access, { expires: 1, secure: true, sameSite: 'strict' });
-  Cookies.set(REFRESH_TOKEN_KEY, refresh, { expires: 7, secure: true, sameSite: 'strict' });
+const ACCESS_TOKEN_KEY = "access";
+const REFRESH_TOKEN_KEY = "refresh";
+
+const cookieOptions = {
+    path: "/",
+    secure:
+        typeof window !== "undefined" &&
+        window.location.protocol === "https:",
+    sameSite: "strict" as const,
 };
 
-export const getAccessToken = () => Cookies.get(ACCESS_TOKEN_KEY);
+export const setTokens = (access: string, refresh: string) => {
+    Cookies.set(ACCESS_TOKEN_KEY, access, {
+        ...cookieOptions,
+        expires: 1,
+    });
+
+    Cookies.set(REFRESH_TOKEN_KEY, refresh, {
+        ...cookieOptions,
+        expires: 7,
+    });
+};
+
+export const getAccessToken = () =>
+    Cookies.get(ACCESS_TOKEN_KEY);
 
 export const logout = () => {
-  Cookies.remove(ACCESS_TOKEN_KEY);
-  Cookies.remove(REFRESH_TOKEN_KEY);
-  window.location.href = '/login';
+    Cookies.remove(ACCESS_TOKEN_KEY, { path: "/" });
+    Cookies.remove(REFRESH_TOKEN_KEY, { path: "/" });
+
+    window.location.href = "/login";
 };
