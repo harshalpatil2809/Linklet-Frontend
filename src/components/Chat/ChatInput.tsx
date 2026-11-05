@@ -82,57 +82,69 @@ const ChatInput = ({
 
     return (
         <footer className="relative shrink-0 bg-[#0f0f0f] px-4 py-4 md:px-6">
-            {showEmoji && (
-                <div
-                    ref={emojiRef}
-                    className="absolute bottom-full left-4 z-50 mb-3 md:left-6"
-                >
-                    <EmojiPicker
-                        onEmojiClick={handleEmojiClick}
-                        theme={Theme.DARK}
-                        skinTonesDisabled
-                        searchDisabled={false}
-                    />
-                </div>
-            )}
+
+
 
             <form
                 onSubmit={handleSend}
                 className="mx-auto flex w-full max-w-6xl items-center gap-3"
             >
-                {/* Message input and emoji picker */}
-                <div className="relative flex min-w-0 flex-1 items-center">
-                    <input
-                        type="text"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        disabled={!activeChat || loading}
-                        placeholder={
-                            activeChat
-                                ? 'Type your message...'
-                                : 'Select a chat to start...'
-                        }
-                        aria-label="Type your message"
-                        className="h-12 w-full rounded-[var(--radius-input)] border border-[var(--color-border)] bg-[var(--color-input-bg)] py-3 pl-4 pr-12 text-sm text-[var(--color-text)] outline-none transition-[border-color,box-shadow] duration-[var(--transition-ui)] placeholder:text-[var(--color-text-subtle)] focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-primary)]/15 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
 
-                    <button
-                        type="button"
-                        onClick={() => setShowEmoji((previous) => !previous)}
-                        disabled={!activeChat || loading}
-                        aria-label={showEmoji ? 'Close emoji picker' : 'Open emoji picker'}
-                        aria-expanded={showEmoji}
-                        className={`absolute right-3 flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-[var(--transition-ui)] disabled:cursor-not-allowed disabled:opacity-40 ${
-                            showEmoji
-                                ? 'text-[var(--color-primary)]'
-                                : 'text-[var(--color-text-subtle)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text)]'
-                        }`}
-                    >
-                        <Smile size={20} />
-                    </button>
+                {/* Message Input and Emoji Picker */}
+                <div className="relative flex min-w-0 flex-1 items-center">
+
+                    {/* Combined Emoji + Input Container */}
+                    <div className="flex h-12 w-full items-center rounded-[var(--radius-input)] border border-[var(--color-border)] bg-[var(--color-input-bg)] transition-[border-color,box-shadow] duration-[var(--transition-ui)] ">
+
+                        {/* Emoji Button */}
+                        <button
+                            type="button"
+                            onClick={() => setShowEmoji((previous) => !previous)}
+                            disabled={!activeChat || loading}
+                            aria-label={showEmoji ? 'Close emoji picker' : 'Open emoji picker'}
+                            aria-expanded={showEmoji}
+                            className={`ml-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-[var(--transition-ui)] disabled:cursor-not-allowed disabled:opacity-40 ${showEmoji
+                                    ? 'text-(--color-primary)'
+                                    : 'text-(--color-text-subtle) hover:text-[var(--color-text)]'
+                                }`}
+                        >
+                            <Smile size={20} />
+                        </button>
+
+                        {/* Message Input */}
+                        <input
+                            type="text"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            disabled={!activeChat || loading}
+                            placeholder={
+                                activeChat
+                                    ? 'Type your message...'
+                                    : 'Select a chat to start...'
+                            }
+                            aria-label="Type your message"
+                            className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-subtle)] disabled:cursor-not-allowed disabled:opacity-50"
+                        />
+                    </div>
+
+                    {/* Emoji Picker Popup */}
+                    {showEmoji && (
+                        <div
+                            ref={emojiRef}
+                            className="absolute bottom-full left-0 z-50 mb-3"
+                        >
+                            <EmojiPicker
+                                onEmojiClick={handleEmojiClick}
+                                theme={Theme.DARK}
+                                skinTonesDisabled
+                                searchDisabled={false}
+                            />
+                        </div>
+                    )}
                 </div>
 
-                {/* Send button */}
+
+                {/* Send Button */}
                 <button
                     type="submit"
                     disabled={!canSend}
@@ -146,6 +158,7 @@ const ChatInput = ({
                     )}
                 </button>
             </form>
+
         </footer>
     )
 }
