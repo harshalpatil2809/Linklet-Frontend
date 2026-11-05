@@ -257,7 +257,7 @@ const RegisterPage = () => {
                     id="email"
                     name="email"
                     type="email"
-                    autoComplete="email"
+                    autoComplete="off"
                     required
                     placeholder="you@example.com"
                     value={email}
@@ -286,7 +286,7 @@ const RegisterPage = () => {
                     id="username"
                     name="username"
                     type="text"
-                    autoComplete="username"
+                    autoComplete="off"
                     required
                     placeholder="Choose a username"
                     value={username}

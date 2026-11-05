@@ -54,7 +54,8 @@ const LoginContent = () => {
           localStorage.setItem('userid', res.data.userid);
 
           toast.success('Login successful!');
-          router.push('/');
+          router.refresh();
+          
         } else {
           toast.error('Login failed: Tokens not received');
         }
@@ -266,7 +267,7 @@ const LoginContent = () => {
                     id="username"
                     name="username"
                     type="text"
-                    autoComplete="username"
+                    autoComplete="off"
                     required
                     placeholder="Enter your username"
                     value={username}

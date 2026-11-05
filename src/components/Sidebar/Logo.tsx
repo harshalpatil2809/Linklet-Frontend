@@ -20,11 +20,11 @@ const Logo = ({ onChatSelect }: LogoProps) => {
 
                 {/* Brand Name */}
                 <div className="flex flex-col">
-                    <h1 className="text-2xl font-black tracking-tighter text-(--color-text) transition-colors duration-300 group-hover:text-(--color-primary)">
+                    <h1 className="text-2xl font-black tracking-tighter text-(--color-primary)">
                         Linklet
                     </h1>
 
-                    <div className="h-1 w-0 rounded-full bg-(--color-primary) transition-all duration-300 group-hover:w-full" />
+                    <div className="h-1 w-full rounded-full bg-(--color-primary) " />
                 </div>
             </Link>
 
