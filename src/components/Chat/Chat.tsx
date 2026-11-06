@@ -75,7 +75,7 @@ const ChatComponent = ({ activeChat: propActiveChat, onBack }: any) => {
       process.env.NEXT_PUBLIC_WS_URL ||
       (window.location.protocol === "https:"
         ? "wss://linklet-backend-efe3.onrender.com"
-        : "ws://localhost:8000");
+        : "ws://localhost:8001");
 
     const wsUrl = `${wsBaseUrl.replace(/\/$/, "")}/ws/chat/${roomId}/`;
 

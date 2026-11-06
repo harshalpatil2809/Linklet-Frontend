@@ -81,7 +81,7 @@ const NotificationBell = ({
     const wsBaseUrl =
       process.env.NODE_ENV === 'production'
         ? 'wss://linklet-backend-efe3.onrender.com'
-        : 'ws://127.0.0.1:8000'
+        : 'ws://127.0.0.1:8001'
 
     const socket = new WebSocket(
       `${wsBaseUrl}/ws/notifications/${encodeURIComponent(myId)}/`
