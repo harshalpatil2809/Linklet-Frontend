@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Bell, CheckCheck, Loader2 } from 'lucide-react'
 import API from '@/lib/axios'
 import type { ChatItem } from './ChatList'
+import { getOrFetchNotificationHistory } from '@/lib/cache/notificationCache'
 
 interface Notification {
   id: number | string
@@ -51,15 +52,20 @@ const NotificationBell = ({
   }, [])
 
   // Fetch notification history.
-  const fetchHistory = useCallback(async () => {
+  const fetchHistory = useCallback(async (userId: string | null) => {
     setLoading(true)
 
     try {
-      const response = await API.get('/api/notification/history/')
+      const data = await getOrFetchNotificationHistory<Notification[]>(
+        userId,
+        async () => {
+          const response = await API.get('/api/notification/history/')
 
-      const data: Notification[] = Array.isArray(response.data)
-        ? response.data
-        : []
+          return Array.isArray(response.data)
+            ? response.data as Notification[]
+            : []
+        }
+      )
 
       setNotifications(data)
       setUnreadCount(
@@ -76,7 +82,7 @@ const NotificationBell = ({
   useEffect(() => {
     if (!myId) return
 
-    void fetchHistory()
+    void fetchHistory(myId)
 
     const wsBaseUrl =
       process.env.NODE_ENV === 'production'

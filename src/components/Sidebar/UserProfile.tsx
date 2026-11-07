@@ -1,16 +1,27 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { LogOut, Loader2, UserRound } from "lucide-react";
 import { logout } from "@/lib/auth";
 import API from "@/lib/axios";
+import {
+    getOrFetchCurrentUserProfile,
+} from "@/lib/cache/profileCache";
+
+interface CachedUserProfile {
+    id?: number;
+    username?: string;
+    full_name?: string | null;
+    bio?: string | null;
+    avatar?: string | null;
+}
 
 interface UserData {
     name: string;
     username: string;
     avatar?: string | null;
 }
-
 interface UserProfileProps {
     onProfileClick: () => void;
 }
@@ -25,16 +36,31 @@ const UserProfile = ({ onProfileClick }: UserProfileProps) => {
 
         const fetchUserProfile = async () => {
             try {
-                const res = await API.get("/api/profiles/me/");
+                const userId = localStorage.getItem("userid");
+
+                const profile =
+                    await getOrFetchCurrentUserProfile<CachedUserProfile>(
+                        userId,
+                        async () => {
+                            const res = await API.get<CachedUserProfile>(
+                                "/api/profiles/me/"
+                            );
+
+                            return res.data;
+                        }
+                    );
 
                 if (cancelled) return;
 
                 setUser({
-                    name: res.data?.full_name?.trim() || res.data?.username || "User",
-                    username: res.data?.username
-                        ? `@${res.data.username}`
+                    name:
+                        profile.full_name?.trim() ||
+                        profile.username ||
+                        "User",
+                    username: profile.username
+                        ? `@${profile.username}`
                         : "@user",
-                    avatar: res.data?.avatar || null,
+                    avatar: profile.avatar || null,
                 });
             } catch (err) {
                 if (!cancelled) {
@@ -104,7 +130,7 @@ const UserProfile = ({ onProfileClick }: UserProfileProps) => {
                     }
                 }}
                 aria-label="Open your profile"
-                className="group flex min-w-0 cursor-pointer items-center gap-3 rounded-2xl p-3 transition-colors duration-200  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-border-focus)"
+                className="group flex min-w-0 cursor-pointer items-center gap-3 rounded-2xl p-3 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-border-focus)"
             >
                 {/* Avatar */}
                 <div className="relative shrink-0">

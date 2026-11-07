@@ -19,6 +19,10 @@ import {
 import { useRouter } from 'next/navigation';
 import API from '@/lib/axios';
 import { toast } from 'sonner';
+import {
+    getOrFetchCurrentUserProfile,
+    setCurrentUserProfile,
+} from '@/lib/cache/profileCache';
 
 interface UserProfile {
     id?: number;
@@ -83,11 +87,18 @@ export default function MyProfileView() {
         setLoading(true);
 
         try {
-            const response = await API.get<UserProfile>(
-                '/api/profiles/me/'
-            );
+            const userId = localStorage.getItem("userid");
 
-            const data = response.data;
+            const data = await getOrFetchCurrentUserProfile<UserProfile>(
+                userId,
+                async () => {
+                    const response = await API.get<UserProfile>(
+                        '/api/profiles/me/'
+                    );
+
+                    return response.data;
+                }
+            );
 
             setProfile(data);
 
@@ -201,7 +212,9 @@ export default function MyProfileView() {
             );
 
             const updatedProfile = response.data;
-
+            // Update shared profile cache
+            const userId = localStorage.getItem("userid");
+            setCurrentUserProfile(userId, updatedProfile);
             setProfile(updatedProfile);
             setFormData({
                 full_name: updatedProfile.full_name ?? '',

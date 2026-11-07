@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react'
 import API from '@/lib/axios'
 import { Loader2, MessageCircle } from 'lucide-react'
+import { getOrFetchMutualChats } from '@/lib/cache/chatCache'
 
 export interface ChatItem {
     id: number
@@ -40,10 +41,15 @@ const ChatList = ({
     useEffect(() => {
         const fetchInbox = async () => {
             try {
-                const res = await API.get('/api/profiles/mutual/')
+                const userId = localStorage.getItem('userid')
+
+                const data = await getOrFetchMutualChats(userId, async () => {
+                    const res = await API.get('/api/profiles/mutual/')
+                    return res.data
+                })
 
                 const formattedChats: ChatItem[] = (
-                    Array.isArray(res.data) ? res.data : []
+                    Array.isArray(data) ? data : []
                 ).map((item: Chat, index: number) => ({
                     id: item.id ?? -(index + 1),
                     name: item.username || 'Unknown User',
@@ -109,8 +115,8 @@ const ChatList = ({
                         onClick={() => onChatSelect(chat)}
                         aria-pressed={isActive}
                         className={`group flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors duration-200 ${isActive
-                                ? 'border-(--color-border-focus) bg-(--color-surface-hover)'
-                                : 'border-transparent hover:border-(--color-border) hover:bg-(--color-surface)'
+                            ? 'border-(--color-border-focus) bg-(--color-surface-hover)'
+                            : 'border-transparent hover:border-(--color-border) hover:bg-(--color-surface)'
                             }`}
                     >
                         {/* Avatar */}
@@ -140,8 +146,8 @@ const ChatList = ({
                             <div className="mb-1 flex items-center justify-between gap-2">
                                 <h3
                                     className={`truncate text-sm font-semibold ${isActive
-                                            ? 'text-(--color-primary)'
-                                            : 'text-(--color-text)'
+                                        ? 'text-(--color-primary)'
+                                        : 'text-(--color-text)'
                                         }`}
                                 >
                                     {chat.name}

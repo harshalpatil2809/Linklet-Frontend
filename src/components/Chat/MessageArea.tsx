@@ -3,6 +3,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import API from "@/lib/axios";
+import { getOrFetchChatHistory } from "@/lib/cache/messageCache";
 
 interface Message {
     id?: number;
@@ -53,12 +54,19 @@ const MessageArea = ({
             setHistoryMessages([]);
 
             try {
-                const response = await API.get(
-                    `/api/messaging/history/${activeChat.id}/`
+                const data = await getOrFetchChatHistory<Message[]>(
+                    activeChat.id,
+                    async () => {
+                        const response = await API.get(
+                            `/api/messaging/history/${activeChat.id}/`
+                        );
+
+                        return response.data;
+                    }
                 );
 
                 if (isActive) {
-                    setHistoryMessages(response.data);
+                    setHistoryMessages(data);
                 }
             } catch (error) {
                 if (isActive) {
@@ -142,8 +150,8 @@ const MessageArea = ({
                                 >
                                     <div
                                         className={`relative wrap-break-word whitespace-pre-wrap px-4 py-3 text-sm leading-relaxed ${isOutgoing
-                                                ? "rounded bg-[#29382c] text-white"
-                                                : "rounded border border-[rgba(213,229,215,0.18)] bg-[rgba(22,34,27,0.78)] text-[#F5F5F0]"
+                                            ? "rounded bg-[#29382c] text-white"
+                                            : "rounded border border-[rgba(213,229,215,0.18)] bg-[rgba(22,34,27,0.78)] text-[#F5F5F0]"
                                             }`}
                                     >
                                         {messageText}
